@@ -24,7 +24,15 @@ public class OSMElement: OSMIdentifiable {
     public var visible:Bool = true
     
     public var tags:[String:String]?
-    public var timeStamp:NSDate = NSDate()
+    private var timestampString:String?
+    public var timeStamp:NSDate? {
+        get {
+            if let timestamp = timestampString {
+                return NSDateFormatter.defaultOpenStreetMapDateFormatter().dateFromString(timestamp)
+            }
+            return nil
+        }
+    }
     
     init(xmlAttributes:[String:String]) {
         
@@ -65,12 +73,8 @@ public class OSMElement: OSMIdentifiable {
             return
         }
         
-        //OSM TimeSTamp 
+        //OSM timestamp
         guard let timeStampString = xmlAttributes[XMLAttributes.Timestamp.rawValue] else {
-            return
-        }
-        
-        guard let date =  NSDateFormatter.defaultOpenStreetMapDateFormatter().dateFromString(timeStampString) else {
             return
         }
         
@@ -94,7 +98,7 @@ public class OSMElement: OSMIdentifiable {
         self.changeset = changeset
         self.userIdentifier = userIdentifier
         self.username = userString
-        self.timeStamp = date
+        self.timestampString = timeStampString
     }
     
     public func newTag(key:String,value:String) {

@@ -38,9 +38,13 @@ class ModelTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
+    
+    func createNode() -> OSMNode {
+        return OSMNode(xmlAttributes: self.nodeAttributes)
+    }
 
     func testNodeModel() {
-        let node = OSMNode(xmlAttributes: self.nodeAttributes)
+        let node = self.createNode()
         XCTAssertEqual(self.version, node.version)
         XCTAssertEqual(self.id, node.osmIdentifier)
         XCTAssertEqual(self.lat, node.latitude)
@@ -58,7 +62,7 @@ class ModelTest: XCTestCase {
         // This is an example of a performance test case.
         self.measureBlock {
             for _ in 1...1000 {
-                self.testNodeModel()
+                _ = self.createNode()
             }
             
         }
