@@ -11,6 +11,7 @@
 		632795E41C239DB600C12798 /* map.osm in Resources */ = {isa = PBXBuildFile; fileRef = 632795E31C239DB600C12798 /* map.osm */; };
 		632795E71C23B8F300C12798 /* NSDateFormatter+OSMKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632795E51C23B76B00C12798 /* NSDateFormatter+OSMKit.swift */; };
 		632795E91C24D8C300C12798 /* ParserDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632795E81C24D8C300C12798 /* ParserDelegate.swift */; };
+		632A664D1C28A95B00E3C846 /* OSMParseOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632A664C1C28A95B00E3C846 /* OSMParseOperation.swift */; };
 		633DD5C01C20EA7F00D1F3BC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633DD5BF1C20EA7F00D1F3BC /* AppDelegate.swift */; };
 		633DD5C21C20EA7F00D1F3BC /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 633DD5C11C20EA7F00D1F3BC /* ViewController.swift */; };
 		633DD5C51C20EA7F00D1F3BC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 633DD5C31C20EA7F00D1F3BC /* Main.storyboard */; };
@@ -50,6 +51,7 @@
 		632795E31C239DB600C12798 /* map.osm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = map.osm; sourceTree = "<group>"; };
 		632795E51C23B76B00C12798 /* NSDateFormatter+OSMKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSDateFormatter+OSMKit.swift"; sourceTree = "<group>"; };
 		632795E81C24D8C300C12798 /* ParserDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParserDelegate.swift; sourceTree = "<group>"; };
+		632A664C1C28A95B00E3C846 /* OSMParseOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OSMParseOperation.swift; sourceTree = "<group>"; };
 		633DD5BC1C20EA7F00D1F3BC /* OSMKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OSMKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		633DD5BF1C20EA7F00D1F3BC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		633DD5C11C20EA7F00D1F3BC /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 			isa = PBXGroup;
 			children = (
 				633DD5F71C20EAA000D1F3BC /* OSMParser.swift */,
+				632A664C1C28A95B00E3C846 /* OSMParseOperation.swift */,
 			);
 			path = Parser;
 			sourceTree = "<group>";
@@ -368,6 +371,7 @@
 				632795E71C23B8F300C12798 /* NSDateFormatter+OSMKit.swift in Sources */,
 				633DD5FA1C20EAA000D1F3BC /* OSMElement.swift in Sources */,
 				633DD5FB1C20EAA000D1F3BC /* OSMIdentifiable.swift in Sources */,
+				632A664D1C28A95B00E3C846 /* OSMParseOperation.swift in Sources */,
 				633DD5FF1C20EAA000D1F3BC /* OSMWay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

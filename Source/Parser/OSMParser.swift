@@ -46,7 +46,9 @@ public class OSMParser:NSObject,NSXMLParserDelegate {
     public var delegate:OSMParserDelegate?
     public var delegateQueue = dispatch_queue_create("OSMParserDelegateQueue", nil)
     
-    private var currentElement:OSMElement?
+    private var currentOperation:OSMParseOperation?
+    private var endOperation = NSOperation()
+    private let operationQueue = NSOperationQueue()
     private var xmlParser:NSXMLParser
     
     private let workQueue = dispatch_queue_create("OSMParserWorkQueue", nil)
@@ -62,16 +64,31 @@ public class OSMParser:NSObject,NSXMLParserDelegate {
     
     public func parse() {
         self.xmlParser.delegate = self
+        self.operationQueue.maxConcurrentOperationCount = NSOperationQueueDefaultMaxConcurrentOperationCount
         dispatch_async(dispatch_get_global_queue(Int(QOS_CLASS_BACKGROUND.rawValue), 0),{[weak self] () -> Void in
             self?.xmlParser.parse()
         })
     }
     
+    func foundElement(element:OSMElement) {
+        dispatch_async(self.delegateQueue, {[weak self] () -> Void in
+            if self != nil {
+                self?.delegate?.didFindElement(self!, element: element)
+            }
+        })
+    }
     
     //MARK: NSXMLParserDelegate Methods
     
     @objc public func parserDidStartDocument(parser: NSXMLParser) {
         dispatch_async(self.workQueue) { () -> Void in
+            
+            self.endOperation.completionBlock = {() -> Void in
+                dispatch_async(self.delegateQueue, { () -> Void in
+                    self.delegate?.didFinishParsing(self)
+                })
+            }
+            
             dispatch_async(self.delegateQueue, { () -> Void in
                 self.delegate?.didStartParsing(self)
             })
@@ -80,57 +97,23 @@ public class OSMParser:NSObject,NSXMLParserDelegate {
     
     @objc public func parser(parser: NSXMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String]) {
         dispatch_async(self.workQueue) {[weak self] () -> Void in
-            switch elementName {
-            case XMLName.Tag.rawValue:
-                guard let key = attributeDict[XMLAttributes.Key.rawValue] else {
+            
+            if let name = XMLName(rawValue: elementName) {
+                switch name {
+                case .Node: fallthrough
+                case .Way: fallthrough
+                case .Relation:
+                    let operation = OSMParseOperation(completion: { [weak self](element) -> Void in
+                        self?.foundElement(element)
+                    })
+                    self?.endOperation.addDependency(operation)
+                    self?.currentOperation = operation
+                default:
                     break
                 }
-                guard let value = attributeDict[XMLAttributes.Value.rawValue] else {
-                    break
-                }
-                self?.currentElement?.newTag(key, value: value)
-            case XMLName.Node.rawValue:
-                self?.currentElement = OSMNode(xmlAttributes:attributeDict)
-            case XMLName.Way.rawValue:
-                self?.currentElement = OSMWay(xmlAttributes:attributeDict)
-            case XMLName.WayNode.rawValue:
-                guard let ndString = attributeDict[XMLAttributes.Ref.rawValue] else {
-                    break
-                }
-                
-                guard let nd = Int64(ndString) else {
-                    break
-                }
-                
-                if let way = self?.currentElement as? OSMWay {
-                    way.nodes.append(nd)
-                }
-            case XMLName.Relation.rawValue:
-                self?.currentElement = OSMRelation(xmlAttributes:attributeDict)
-            case XMLName.Member.rawValue:
-                guard let typeString = attributeDict[XMLAttributes.Typ.rawValue] else {
-                    break
-                }
-                
-                guard let type = OSMElementType(rawValue: typeString) else {
-                    break
-                }
-                
-                guard let refString = attributeDict[XMLAttributes.Ref.rawValue] else {
-                    break
-                }
-                
-                guard let ref = Int64(refString) else {
-                    break
-                }
-                let member = OSMRelationMember(type: type, reference: ref,role:attributeDict[XMLAttributes.Role.rawValue])
-                guard let relation = self?.currentElement as? OSMRelation else {
-                    break
-                }
-                relation.members.append(member)
-            default:
-                break
+                self?.currentOperation?.add(name, attributes: attributeDict)
             }
+            
         }
         
     }
@@ -141,14 +124,11 @@ public class OSMParser:NSObject,NSXMLParserDelegate {
             case XMLName.Node.rawValue: fallthrough
             case XMLName.Way.rawValue: fallthrough
             case XMLName.Relation.rawValue:
-                if let element = self.currentElement {
-                    dispatch_async(self.delegateQueue, {[weak self] () -> Void in
-                        if self != nil {
-                            self?.delegate?.didFindElement(self!, element: element)
-                        }
-                    })
-                    
+                if let operation = self.currentOperation {
+                    self.operationQueue.addOperation(operation)
                 }
+                
+                self.currentOperation = nil
             default:
                 break
             }
@@ -157,9 +137,7 @@ public class OSMParser:NSObject,NSXMLParserDelegate {
     
     @objc public func parserDidEndDocument(parser: NSXMLParser) {
         dispatch_async(self.workQueue) { () -> Void in
-            dispatch_async(self.delegateQueue, { () -> Void in
-                self.delegate?.didFinishParsing(self)
-            })
+            self.operationQueue.addOperation(self.endOperation)
         }
     }
     
