@@ -101,12 +101,12 @@ public class OSMElement: OSMIdentifiable {
         self.timestampString = timeStampString
     }
     
-    public func newTag(key:String,value:String) {
+    public func addTag(key:String,value:String) {
         if let _ = self.tags {
             self.tags![key] = value
         } else {
             self.tags = [String:String]()
-            self.newTag(key, value: value)
+            self.addTag(key, value: value)
         }
     }
 }

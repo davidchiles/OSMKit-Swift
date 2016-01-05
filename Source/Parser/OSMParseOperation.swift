@@ -72,7 +72,7 @@ internal class OSMParseOperation:NSOperation {
                 break
             }
             
-            element.newTag(key, value: value)
+            element.addTag(key, value: value)
         }
         
         

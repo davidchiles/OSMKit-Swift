@@ -25,20 +25,20 @@ public enum XMLName:String {
 }
 
 public enum XMLAttributes:String {
-    case ID = "id"
-    case UID = "uid"
-    case User = "user"
-    case Version = "version"
+    case ID        = "id"
+    case UID       = "uid"
+    case User      = "user"
+    case Version   = "version"
     case Changeset = "changeset"
     case Timestamp = "timestamp"
-    case Visible = "visible"
-    case Latitude = "lat"
+    case Visible   = "visible"
+    case Latitude  = "lat"
     case Longitude = "lon"
-    case Key      = "k"
-    case Value    = "v"
-    case Ref = "ref"
-    case Role = "role"
-    case Typ = "type"
+    case Key       = "k"
+    case Value     = "v"
+    case Ref       = "ref"
+    case Role      = "role"
+    case Typ       = "type"
 }
 
 public class OSMParser:NSObject,NSXMLParserDelegate {

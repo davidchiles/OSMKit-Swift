@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import OSMKit
+@testable import OSMKit_Swift
 
 class OSMParserTest: XCTestCase {
     

@@ -7,7 +7,37 @@
 //
 
 import XCTest
-@testable import OSMKit
+@testable import OSMKit_Swift
+
+
+let tags = ["key1":"value1","key2":"value2"]
+
+let elementAttributes = ["version":"2","id":"35719005","visible":"true","timestamp":"2009-10-21T02:05:20Z","user":"Speight","uid":"24452","changeset":"2908326"]
+
+public func testNode() -> OSMNode {
+    var nodeAttributes = elementAttributes
+    nodeAttributes["lat"] = "37.8815080"
+    nodeAttributes["lon"] = "-122.2319067"
+    let node = OSMNode(xmlAttributes: nodeAttributes)
+    node.tags = tags
+    return node
+}
+
+public func testWay() -> OSMWay {
+    let way = OSMWay(xmlAttributes: elementAttributes)
+    way.nodes = [1,2,3,4,5,6,7]
+    return way
+}
+
+public func testRelation() -> OSMRelation {
+    let relation = OSMRelation(xmlAttributes: elementAttributes)
+    let member1 = OSMRelationMember(type: .Node, reference: 1, role: nil)
+    let member2 = OSMRelationMember(type: .Way, reference: 34, role: "forward")
+    let member3 = OSMRelationMember(type: .Relation, reference: 34343, role: "backward")
+    relation.members = [member1,member2,member3]
+    
+    return relation
+}
 
 class ModelTest: XCTestCase {
     
@@ -18,7 +48,7 @@ class ModelTest: XCTestCase {
     let visible = true
     let changeset:Int64 = 2908326
     var date = NSDate()
-    let nodeAttributes:[String:String] = ["version":"2","id":"35719005","lon":"-122.2319067","lat":"37.8815080","visible":"true","timestamp":"2009-10-21T02:05:20Z","user":"Speight","uid":"24452","changeset":"2908326"]
+    
 
     override func setUp() {
         super.setUp()
@@ -38,13 +68,9 @@ class ModelTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         super.tearDown()
     }
-    
-    func createNode() -> OSMNode {
-        return OSMNode(xmlAttributes: self.nodeAttributes)
-    }
 
     func testNodeModel() {
-        let node = self.createNode()
+        let node = testNode()
         XCTAssertEqual(self.version, node.version)
         XCTAssertEqual(self.id, node.osmIdentifier)
         XCTAssertEqual(self.lat, node.latitude)
@@ -56,13 +82,17 @@ class ModelTest: XCTestCase {
         let coordinate = node.coordinate
         XCTAssertEqual(self.lat, coordinate.latitude)
         XCTAssertEqual(self.lon, coordinate.longitude)
+        
+        node.addTag("key", value: "value")
+        let tagsEqual = node.tags! == ["key":"value"]
+        XCTAssertTrue(tagsEqual)
     }
 
     func testNodePerformance() {
         // This is an example of a performance test case.
         self.measureBlock {
             for _ in 1...1000 {
-                _ = self.createNode()
+                _ = testNode()
             }
             
         }

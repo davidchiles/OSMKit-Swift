@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import OSMKit
+import OSMKit_Swift
 
 class ParserDelegate:OSMParserDelegate {
     
