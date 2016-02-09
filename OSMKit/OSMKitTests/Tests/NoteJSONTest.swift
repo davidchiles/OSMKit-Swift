@@ -9,6 +9,39 @@
 import XCTest
 @testable import OSMKit_Swift
 
+class NotesJSONTest: XCTestCase {
+    
+    var data:NSData? = nil
+    
+    override func setUp() {
+        super.setUp()
+        let fileURL = NSBundle(forClass: self.dynamicType).URLForResource("notes", withExtension: "json")
+        self.data = NSData(contentsOfURL: fileURL!)
+    }
+    
+    func testDecoder() {
+        do {
+            let notes = try JSONDecoder.notes(self.data!)
+            XCTAssertNotNil(notes,"nil notes")
+            XCTAssertTrue(notes.count == 100, "Incorrect note count")
+            let commentCount = notes.reduce(0, combine: { (total, note) in
+                total+note.comments!.count
+            })
+            XCTAssertTrue(commentCount == 157,"Incorrect comment count")
+        }
+        catch let error {
+           XCTAssertNil(error,"Error \(error)")
+        }
+    }
+    
+    func testDecoderSpeed() {
+        self.measureBlock { () -> Void in
+            let notes = try! JSONDecoder.notes(self.data!)
+            XCTAssertNotNil(notes)
+        }
+    }
+}
+
 class NoteJSONTest: XCTestCase {
     
     var data:NSData? = nil
@@ -46,11 +79,8 @@ class NoteJSONTest: XCTestCase {
             
             XCTAssertNotNil(note,"nil note")
         }
-        catch let error as JSONParsingError {
+        catch let error {
             XCTAssertNil(error,"Error: \(error)")
-        }
-        catch {
-            XCTAssert(false)
         }
         
         
