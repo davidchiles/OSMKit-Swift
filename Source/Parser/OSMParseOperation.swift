@@ -106,7 +106,7 @@ internal class OSMParseOperation:NSOperation {
             guard let ref = Int64(refString) else {
                 break
             }
-            let member = OSMRelationMember(type: type, reference: ref,role:attributeDict[XMLAttributes.Role.rawValue])
+            let member = OSMRelationMember(member: OSMID(type: type, ref: ref), role: attributeDict[XMLAttributes.Role.rawValue])
             (element as? OSMRelation)?.members.append(member)
         }
         

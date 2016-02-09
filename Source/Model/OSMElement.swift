@@ -24,7 +24,7 @@ public class OSMElement: OSMIdentifiable {
     public var visible:Bool = true
     
     public var tags:[String:String]?
-    private var timestampString:String?
+    public var timestampString:String?
     public var timeStamp:NSDate? {
         get {
             if let timestamp = timestampString {

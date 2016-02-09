@@ -20,11 +20,18 @@ public enum APIURLString:String {
 
 enum APIEndpoint:String {
     case Map = "map"
+    case Notes = "notes.json"
     
 }
 
 internal enum Paramters:String {
     case BoundingBox = "bbox"
+}
+
+extension BoundingBox {
+    func osmURLString() -> String {
+        return "\(self.left),\(self.bottom),\(self.right),\(self.top)"
+    }
 }
 
 public class OSMAPIManager {
@@ -40,10 +47,20 @@ public class OSMAPIManager {
     
     //MARK: Downling data
     public func downloadBoundingBox(boundingBox:BoundingBox,completion:(data:NSData?,error:NSError?)->Void) {
-        let bboxString = "\(boundingBox.left),\(boundingBox.bottom),\(boundingBox.right),\(boundingBox.top)"
+        let bboxString = boundingBox.osmURLString()
         let parameters = [Paramters.BoundingBox.rawValue:bboxString]
-        let urlString = self.URL.endpoint(APIEndpoint.Map)
+        let urlString = self.URL.endpoint(.Map)
         self.apiManager.request(.GET, urlString, parameters: parameters, encoding: .URL, headers: nil).response { (request, response, data, error) -> Void in
+            completion(data: data, error: error)
+        }
+    }
+    
+    //Mark: Downloading Notes
+    public func downloadNotesBoundingBox(boundingBox:BoundingBox, completion:(data:NSData?,error:NSError?)->Void) {
+        let bboxString = boundingBox.osmURLString()
+        let parameters = [Paramters.BoundingBox.rawValue:bboxString]
+        let urlString = self.URL.endpoint(.Notes)
+        self.apiManager.request(.GET, urlString, parameters: parameters, encoding: .URL, headers: nil).response { (request, Response, data, error) -> Void in
             completion(data: data, error: error)
         }
     }

@@ -1,5 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name         = 'OSMKit-Swift'
+  spec.author       = 'David Chiles'
   spec.license      = { :type => 'MIT' }
   spec.homepage     = 'https://github.com/davidchiles/OSMKit-Swift'
   spec.version      = '0.1'
@@ -13,7 +14,6 @@ Pod::Spec.new do |spec|
 
   spec.subspec 'Core' do |sp|
     sp.source_files = 'Source/{Model,Utilities,Parser}/*.swift'
-
   end
 
   spec.subspec 'API' do |sp|

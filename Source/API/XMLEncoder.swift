@@ -26,8 +26,9 @@ extension Dictionary where Key: StringLiteralConvertible, Value: StringLiteralCo
 extension OSMRelationMember {
     func xmlValue() -> AEXMLElement {
         var attributes = [String:String]()
-        attributes[XMLAttributes.Typ.rawValue] = self.type.rawValue
-        attributes[XMLAttributes.Ref.rawValue] = String(self.reference)
+        attributes[XMLAttributes.Typ.rawValue] =
+            self.member.type().rawValue
+        attributes[XMLAttributes.Ref.rawValue] = String(self.member.ref())
         attributes[XMLAttributes.Role.rawValue] = self.role
         return AEXMLElement.init(XMLName.Member.rawValue, value: nil, attributes: attributes)
     }
